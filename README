@@ -1,0 +1,8 @@
+A simple module that parses unittest output for Buildbot.
+
+Usage:
+* Put buildbotunittest.py on your Python path
+* import in your master.cfg:
+    from buildbotunittest import LoggedUnitTest
+* use LoggedUnittest as you would use ShellCommand. 
+
