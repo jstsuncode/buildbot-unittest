@@ -3,7 +3,7 @@ import re
 
 from buildbot.process.buildstep import LogLineObserver
 from buildbot.steps.shell import ShellCommand
-
+from buildbot.status.results import SUCCESS, FAILURE, WARNINGS
 
 class LoggedUnitTest(ShellCommand):
     def __init__(self, *args, **kwargs):
@@ -13,10 +13,16 @@ class LoggedUnitTest(ShellCommand):
         self.addLogObserver('stdio', testObserver)
 
     def createSummary(self, log):
+        self.setProperty("failed_tests", len(self.testResults))
         self.addHTMLLog(
             'Tests: %d failures and errors' % (len(self.testResults),),
             ''.join('<b>%s</b><pre>%s</pre>' % t for t in self.testResults)
         )
+
+    def evaluateCommand(self, cmd):
+        if self.getProperty("failed_tests"):
+            return FAILURE
+        return SUCCESS
 
 
 class UnitTestsObserver(LogLineObserver):
